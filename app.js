@@ -25,7 +25,7 @@ app.post('/ideas', auth, function (req, res) {
     tags : req.body.tags,
     meta : req.body.meta,
     comments : req.body.comments,
-    hidden : req.body.hidden
+    public : req.body.public
 
   }, 
   function (err, idea) {
@@ -35,7 +35,7 @@ app.post('/ideas', auth, function (req, res) {
 });
 
 app.get('/ideas/public', function (req, res) {
-  Idea.find({}, function (err, ideas) {
+  Idea.findPublic(function (err, ideas) {
     if (err) return res.status(500).send("There was a problem finding the ideas.");
     res.status(200).send(ideas);
   });
@@ -63,6 +63,13 @@ app.get('/ideas/:tag', auth, function (req, res) {
     res.status(200).send(ideas);
   });
 });
+
+app.delete('/ideas', auth, function(req, res) {
+  Idea.remove({ userId: req.uid }, function (err) {
+    if (err) return res.status(500).send("There was a problem deleting the information from the database.");
+    res.status(200).send("Ideas removed Successfully");
+  });	
+})
 
 
 // ***************************************************

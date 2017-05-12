@@ -15,7 +15,7 @@ var ideaSchema = new Schema({
     type: Date, 
     default: Date.now 
   },
-  hidden: Boolean,
+  public: Boolean,
   meta: {
     votes: Number,
     favs:  Number
@@ -34,12 +34,19 @@ ideaSchema.static('findByUserId', function (uid, callback) {
 ideaSchema.static('findByTag', function(uid, tag, callback) {
   //console.log("uid is: " + uid + ", tag is: " + tag);
   return this.find({userId: uid, tags: { $in: [tag]}}, callback);
-})
+});
 
 ideaSchema.static('findByTagPublic', function(uid, tag, callback) {
   //console.log("tag is: " + tag);
   return this.find({public: true, tags: { $in: [tag]}}, callback);
-})
+});
+
+ideaSchema.static('findPublic', function(callback) {
+  //console.log("tag is: " + tag);
+  return this.find({public: true}, callback);
+});
+
+
 
 mongoose.model('Idea', ideaSchema);
 module.exports = mongoose.model('Idea');

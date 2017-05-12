@@ -59,22 +59,22 @@ describe('new user workflow', function() {
         .expect(200)
         .end(function(err, res) {
           if (err) return done(err);
+          console.log(res.body);
           //res.text.should.equal('Successfully created user');
           done();
         });
     });
   });
 
-  describe('create a new idea for new user in db', function() {
+  describe('create a new PRIVATE idea for new user in db', function() {
     it('respond with 200 and successfully created idea', function(done) {
       request(app)
         .post('/ideas')
-        .send({ idea: "new #amazing #test idea", tags: ["amazing","test"], meta: {votes:5, favs:3}, hidden: false })
+        .send({ idea: "new #amazing #test private idea", tags: ["amazing","test"], public: false })
         .set('Accept', 'application/json')
         .set('X-Access-Token', token)
         .expect(200)
         .end(function(err, res) {
-          console.log(res.body);
           if (err) return done(err);
           //res.text.should.equal('Successfully created user');
           done();
@@ -82,14 +82,108 @@ describe('new user workflow', function() {
     });
   });
 
-  describe('get ideas for new user', function() {
-    it('respond with json', function(done) {
+  describe('create a new PUBLIC idea for new user in db', function() {
+    it('respond with 200 and successfully created idea', function(done) {
+      request(app)
+        .post('/ideas')
+        .send({ idea: "remove corner three #nba #test public idea", tags: ["nba","test"], meta: {votes:5, favs:3}, public: true })
+        .set('Accept', 'application/json')
+        .set('X-Access-Token', token)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          //res.text.should.equal('Successfully created user');
+          done();
+        });
+    });
+  });
+
+  describe('get ALL ideas for new user', function() {
+    it('respond with 200 and json of ideas', function(done) {
       request(app)
         .get('/ideas')
         .set('Accept', 'application/json')
         .set('X-Access-Token', token)
         .expect('Content-Type', /json/)
-        .expect(200, done);
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          res.body.length.should.eql(2);
+          done();
+        });
+    });
+  });
+
+  describe('get ideas for user not in system', function() {
+    it('respond with 403', function(done) {
+      request(app)
+        .get('/ideas')
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(403, done);
+    });
+  });  
+
+  describe('get ALL PUBLIC ideas for new user', function() {
+    it('respond with 200 and json of ideas', function(done) {
+      request(app)
+        .get('/ideas/public')
+        .set('Accept', 'application/json')
+        .set('X-Access-Token', token)
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end(function(err, res) {
+          //console.log(res.body);
+          if (err) return done(err);
+          res.body.length.should.eql(1);
+          done();
+        });
+    });
+  });
+
+  describe('get ALL PUBLIC ideas for unauthenticated user', function() {
+    it('respond with 200 and json of ideas', function(done) {
+      request(app)
+        .get('/ideas/public')
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end(function(err, res) {
+          //console.log(res.body);
+          if (err) return done(err);
+          res.body.length.should.eql(1);
+          done();
+        });
+    });
+  });
+
+  describe('delete all ideas by new user', function() {
+    it('respond with 200 and successfully deleted ideas for new user', function(done) {
+      request(app)
+        .delete('/ideas')
+        .set('Accept', 'application/json')
+        .set('X-Access-Token', token)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          //res.text.should.equal('Successfully created user');
+          done();
+        });
+    });
+  });
+
+  describe('delete all ideas by unauthorized user', function() {
+    it('respond with 403', function(done) {
+      request(app)
+        .delete('/ideas')
+        .set('Accept', 'application/json')
+        .set('X-Access-Token', "somebadtoken-adfasdfasdf")
+        .expect(403)
+        .end(function(err, res) {
+          if (err) return done(err);
+          //res.text.should.equal('Successfully created user');
+          done();
+        });
     });
   });
 
@@ -106,7 +200,23 @@ describe('new user workflow', function() {
           done();
         });
     });
-  })
+  });
+
+  describe('delete user by unauthorized user', function() {
+    it('respond with 403', function(done) {
+      request(app)
+        .delete('/users')
+        .set('Accept', 'application/json')
+        .set('X-Access-Token', "somebadtoken-adfasdfasdf")
+        .expect(403)
+        .end(function(err, res) {
+          if (err) return done(err);
+          //res.text.should.equal('Successfully created user');
+          done();
+        });
+    });
+  });
+
 });
 
 
