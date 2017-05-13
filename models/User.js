@@ -5,7 +5,7 @@ var userSchema = new Schema({
   name: String,
   email:  String,
   userId: String,
-  date: { 
+  created: { 
     type: Date, 
     default: Date.now 
   }
@@ -21,5 +21,5 @@ userSchema.static('findByUserEmail', function (email, callback) {
   return this.find({ email: email }, callback);
 });
 
-mongoose.model('User', userSchema);
-module.exports = mongoose.model('User');
+
+module.exports = mongoose.model('User', userSchema);

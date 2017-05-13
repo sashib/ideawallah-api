@@ -2,7 +2,10 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var ideaSchema = new Schema({
-  idea:  String,
+  idea:  {
+    type: String,
+    index: true
+  },
   userId: String,
   comments: [
     { 
@@ -20,7 +23,7 @@ var ideaSchema = new Schema({
     votes: Number,
     favs:  Number
   },  
-  tags: { 
+  hashtags: { 
     type: [String], 
     index: true 
   }
@@ -47,6 +50,4 @@ ideaSchema.static('findPublic', function(callback) {
 });
 
 
-
-mongoose.model('Idea', ideaSchema);
-module.exports = mongoose.model('Idea');
+module.exports = mongoose.model('Idea', ideaSchema);

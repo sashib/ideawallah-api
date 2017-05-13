@@ -1,8 +1,8 @@
 var request = require("supertest");
 var should = require("should");
 var app = require("../app");
-var firebase = require("firebase");
 
+var firebase = require("firebase");
 var config = {
     apiKey: "AIzaSyAyZElbyw2WsnB2MzKsgAOanyOztu5ozwM",
     authDomain: "ideawallah.firebaseapp.com",

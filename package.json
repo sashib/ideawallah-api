@@ -4,8 +4,8 @@
   "description": "become an idea machine",
   "main": "index.js",
   "scripts": {
-    "test": "mocha spec tests",
-    "dev": "nodemon server.js"
+    "test": "NODE_ENV=test mocha tests",
+    "dev": "NODE_ENV=dev nodemon server.js"
   },
   "repository": {
     "type": "git",

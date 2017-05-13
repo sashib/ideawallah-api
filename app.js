@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var Idea = require('./models/Idea');
 var User = require('./models/User');
 var Tag = require('./models/Tag');
+var utils = require('./utils');
 
 var app = express();
 
@@ -18,11 +19,64 @@ app.use(bodyParser.json({ type: 'application/json' }));
 
 // ***************************************************
 
+var IDEA_QUERY_LIMIT = 2;
+var IDEA_QUERY_SORT_ORDER = {created: -1};
+
+function addIdea(userId, str, callback) {
+  var hashtags = [];
+
+  var idea = new Idea();
+  idea.userId = userId;
+  idea.idea = str;
+  idea.hashtags = hashTagHelper.getHashTags(str);
+  idea.save(callback);  
+};
+
+function find(userId, searchTxt, page, callback) {
+  if (page == null)
+    page = 0;
+  
+  if (searchTxt != null && searchTxt != '') {
+    Idea.find({$text: {$search: searchTxt}})
+    .where('userId').equals(userId)
+    .limit(ideaRouter.IDEA_QUERY_LIMIT)
+    .skip(ideaRouter.IDEA_QUERY_LIMIT * page)
+    .sort(ideaRouter.IDEA_QUERY_SORT_ORDER)
+    .exec(callback);
+  } else {
+    Idea.find()
+    .where('userId').equals(userId)
+    .limit(ideaRouter.IDEA_QUERY_LIMIT)
+    .skip(ideaRouter.IDEA_QUERY_LIMIT * page)
+    .sort(ideaRouter.IDEA_QUERY_SORT_ORDER)
+    .exec(callback);
+  }
+
+};
+
+function getTodayIdeas(sender, senderSource, cb) {
+  var d1 = new Date();
+  d1.setUTCHours(0,0,0,0);
+  var d2 = new Date();
+  d2.setUTCHours(24,0,0,0);
+
+  Idea.count({"created": {"$gte": d1, "$lt": d2}, "userId": sender, "userSource": senderSource}, function(err, c) {
+    console.log('Count is ' + c);
+    if (c <= 1) {
+      txt = messageHelper.ADDED_IDEA_TODAY;
+    } else {
+      txt = messageHelper.ADDED_IDEAS_TODAY;
+    }
+    cb(sender, c + txt);
+  });
+
+};
+
 app.post('/ideas', auth, function (req, res) {
   Idea.create({
     idea : req.body.idea,
     userId : req.uid,
-    tags : req.body.tags,
+    hashtags : req.body.tags,
     meta : req.body.meta,
     comments : req.body.comments,
     public : req.body.public

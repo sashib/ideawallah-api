@@ -17,5 +17,4 @@ tagSchema.static('findByUserId', function (uid, callback) {
   return this.find({ userId: uid }, callback);
 });
 
-mongoose.model('Tag', tagSchema);
-module.exports = mongoose.model('Tag');
+module.exports = mongoose.model('Tag', tagSchema);
