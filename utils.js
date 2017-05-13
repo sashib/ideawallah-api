@@ -7,7 +7,7 @@ utils.getHashTags = function(str) {
   var re = /#\w+\b/ig;
   while ((match = re.exec(str)) != null){
   	var hashtag = match[0];
-  	hashTags.push(hashtag);
+  	hashTags.push(hashtag.substr(1,hashtag.length));
   }	
   return hashTags;
 };

@@ -48,7 +48,7 @@ after(function (done) {
   });
 });
 
-describe('new user workflow', function() {
+describe('app test', function() {
   describe('create new user in db', function() {
     it('respond with 200 and successfully created user', function(done) {
       request(app)
@@ -59,8 +59,7 @@ describe('new user workflow', function() {
         .expect(200)
         .end(function(err, res) {
           if (err) return done(err);
-          console.log(res.body);
-          //res.text.should.equal('Successfully created user');
+          res.text.should.equal('Successfully created user');
           done();
         });
     });
@@ -70,7 +69,23 @@ describe('new user workflow', function() {
     it('respond with 200 and successfully created idea', function(done) {
       request(app)
         .post('/ideas')
-        .send({ idea: "new #amazing #test private idea", tags: ["amazing","test"], public: false })
+        .send({ idea: "new #amazing #test private idea", public: false })
+        .set('Accept', 'application/json')
+        .set('X-Access-Token', token)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          //res.text.should.equal('Successfully created user');
+          done();
+        });
+    });
+  });
+
+  describe('create a 2nd PRIVATE idea for new user in db', function() {
+    it('respond with 200 and successfully created idea', function(done) {
+      request(app)
+        .post('/ideas')
+        .send({ idea: "new #amazing idea about water conservation #eco", public: false })
         .set('Accept', 'application/json')
         .set('X-Access-Token', token)
         .expect(200)
@@ -86,7 +101,23 @@ describe('new user workflow', function() {
     it('respond with 200 and successfully created idea', function(done) {
       request(app)
         .post('/ideas')
-        .send({ idea: "remove corner three #nba #test public idea", tags: ["nba","test"], meta: {votes:5, favs:3}, public: true })
+        .send({ idea: "remove corner three #nba #test public idea", meta: {votes:5, favs:3}, public: true })
+        .set('Accept', 'application/json')
+        .set('X-Access-Token', token)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          //res.text.should.equal('Successfully created user');
+          done();
+        });
+    });
+  });
+
+  describe('create a 2nd PUBLIC idea for new user in db', function() {
+    it('respond with 200 and successfully created idea', function(done) {
+      request(app)
+        .post('/ideas')
+        .send({ idea: "app to come with #ideas #tech #startups", meta: {votes:5, favs:3}, public: true })
         .set('Accept', 'application/json')
         .set('X-Access-Token', token)
         .expect(200)
@@ -108,7 +139,41 @@ describe('new user workflow', function() {
         .expect(200)
         .end(function(err, res) {
           if (err) return done(err);
-          res.body.length.should.eql(2);
+          res.body.length.should.eql(4);
+          res.body[0].hashtags.should.containEql("amazing");
+          done();
+        });
+    });
+  });
+
+  describe('get ideas with hashtag #eco for new user', function() {
+    it('respond with 200 and json of ideas', function(done) {
+      request(app)
+        .get('/ideas/eco')
+        .set('Accept', 'application/json')
+        .set('X-Access-Token', token)
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          res.body.length.should.eql(1);
+          res.body[0].hashtags.should.containEql("eco");
+          done();
+        });
+    });
+  });
+
+  describe('get ideas with hashtag that doesn not exist for new user', function() {
+    it('respond with 200 and json of ideas', function(done) {
+      request(app)
+        .get('/ideas/blahblah')
+        .set('Accept', 'application/json')
+        .set('X-Access-Token', token)
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          res.body.length.should.eql(0);
           done();
         });
     });
@@ -135,7 +200,40 @@ describe('new user workflow', function() {
         .end(function(err, res) {
           //console.log(res.body);
           if (err) return done(err);
+          res.body.length.should.eql(2);
+          done();
+        });
+    });
+  });
+
+  describe('get ALL PUBLIC ideas with hashtag #tech for new user', function() {
+    it('respond with 200 and json of ideas', function(done) {
+      request(app)
+        .get('/ideas/public/tech')
+        .set('Accept', 'application/json')
+        .set('X-Access-Token', token)
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
           res.body.length.should.eql(1);
+          res.body[0].hashtags.should.containEql('tech');
+          done();
+        });
+    });
+  });  
+
+  describe('get ALL PUBLIC ideas with hashtag that does not exist for new user', function() {
+    it('respond with 200 and json of ideas', function(done) {
+      request(app)
+        .get('/ideas/public/amazing')
+        .set('Accept', 'application/json')
+        .set('X-Access-Token', token)
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          res.body.length.should.eql(0);
           done();
         });
     });
@@ -151,7 +249,40 @@ describe('new user workflow', function() {
         .end(function(err, res) {
           //console.log(res.body);
           if (err) return done(err);
+          res.body.length.should.eql(2);
+          done();
+        });
+    });
+  });
+
+  describe('get ALL PUBLIC ideas with hashtag #test for unauthenticated user', function() {
+    it('respond with 200 and json of ideas', function(done) {
+      request(app)
+        .get('/ideas/public/test')
+        .set('Accept', 'application/json')
+        .set('X-Access-Token', token)
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
           res.body.length.should.eql(1);
+          res.body[0].hashtags.should.containEql('test');
+          done();
+        });
+    });
+  });  
+
+  describe('get ALL PUBLIC ideas with hashtag that does not exist for unauthenticated user', function() {
+    it('respond with 200 and json of ideas', function(done) {
+      request(app)
+        .get('/ideas/public/surf')
+        .set('Accept', 'application/json')
+        .set('X-Access-Token', token)
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          res.body.length.should.eql(0);
           done();
         });
     });

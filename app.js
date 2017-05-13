@@ -76,9 +76,7 @@ app.post('/ideas', auth, function (req, res) {
   Idea.create({
     idea : req.body.idea,
     userId : req.uid,
-    hashtags : req.body.tags,
-    meta : req.body.meta,
-    comments : req.body.comments,
+    hashtags : utils.getHashTags(req.body.idea),
     public : req.body.public
 
   }, 

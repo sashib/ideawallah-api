@@ -36,12 +36,12 @@ ideaSchema.static('findByUserId', function (uid, callback) {
 
 ideaSchema.static('findByTag', function(uid, tag, callback) {
   //console.log("uid is: " + uid + ", tag is: " + tag);
-  return this.find({userId: uid, tags: { $in: [tag]}}, callback);
+  return this.find({userId: uid, hashtags: { $in: [tag]}}, callback);
 });
 
-ideaSchema.static('findByTagPublic', function(uid, tag, callback) {
+ideaSchema.static('findByTagPublic', function(tag, callback) {
   //console.log("tag is: " + tag);
-  return this.find({public: true, tags: { $in: [tag]}}, callback);
+  return this.find({public: true, hashtags: { $in: [tag]}}, callback);
 });
 
 ideaSchema.static('findPublic', function(callback) {
