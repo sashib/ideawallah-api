@@ -15,15 +15,20 @@ firebase.initializeApp(config);
 
 
 
-var token;
+var token, token2;
+var testUserId, testUserId2;
 
-var testUserId;
 var testEmail = "tester@appwallah.com";
 var testPswd = "tester";
 var testName = "tester";
 
+var testEmail2 = "secondtester@appwallah.com";
+var testPswd2 = "tester";
+var testName2 = "second tester";
 
+/*
 before(function (done) {
+  //create first test user
   firebase.auth().createUserWithEmailAndPassword(testEmail, testPswd).then(function(user) {
 	testUserId = user.uid;
     user.getToken(false).then(function(accessToken) {
@@ -37,6 +42,20 @@ before(function (done) {
     done(error);
   });
 
+  //create 2nd test user
+  firebase.auth().createUserWithEmailAndPassword(testEmail2, testPswd2).then(function(user) {
+	testUserId2 = user.uid;
+    user.getToken(false).then(function(accessToken) {
+    	token2 = accessToken;
+    	done();
+    });
+  }, function(error) {
+    // Handle Errors here.
+    var errorCode = error.code;
+    var errorMessage = error.message;
+    done(error);
+  });  
+
 });
 
 after(function (done) {
@@ -47,9 +66,28 @@ after(function (done) {
   	done(error);
   });
 });
+*/
 
 describe('app test', function() {
-  describe('create new user in db', function() {
+
+  describe('create first test firebase user', function() {
+    it('successfully create test user in firebase', function(done) {
+      firebase.auth().createUserWithEmailAndPassword(testEmail, testPswd).then(function(user) {
+	    testUserId = user.uid;
+        user.getToken(false).then(function(accessToken) {
+    	  token = accessToken;
+    	  done();
+        });
+      }, function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        done(error);
+      });
+    });
+  });
+
+  describe('create first test user in db', function() {
     it('respond with 200 and successfully created user', function(done) {
       request(app)
         .post('/users')
@@ -65,7 +103,7 @@ describe('app test', function() {
     });
   });
 
-  describe('create a new PRIVATE idea for new user in db', function() {
+  describe('create a new PRIVATE idea for first test user in db', function() {
     it('respond with 200 and successfully created idea', function(done) {
       request(app)
         .post('/ideas')
@@ -76,12 +114,13 @@ describe('app test', function() {
         .end(function(err, res) {
           if (err) return done(err);
           //res.text.should.equal('Successfully created user');
+          res.body.date.should.be.ok();
           done();
         });
     });
   });
 
-  describe('create a 2nd PRIVATE idea for new user in db', function() {
+  describe('create a 2nd PRIVATE idea for first test user in db', function() {
     it('respond with 200 and successfully created idea', function(done) {
       request(app)
         .post('/ideas')
@@ -97,7 +136,7 @@ describe('app test', function() {
     });
   });
 
-  describe('create a new PUBLIC idea for new user in db', function() {
+  describe('create a new PUBLIC idea for first test user in db', function() {
     it('respond with 200 and successfully created idea', function(done) {
       request(app)
         .post('/ideas')
@@ -113,7 +152,7 @@ describe('app test', function() {
     });
   });
 
-  describe('create a 2nd PUBLIC idea for new user in db', function() {
+  describe('create a 2nd PUBLIC idea for first test user in db', function() {
     it('respond with 200 and successfully created idea', function(done) {
       request(app)
         .post('/ideas')
@@ -129,24 +168,39 @@ describe('app test', function() {
     });
   });
 
-  describe('get ALL ideas for new user', function() {
-    it('respond with 200 and json of ideas', function(done) {
+  describe('get ALL ideas for first test user for limit 3 and page 0', function() {
+    it('respond with 200 and json of 3 ideas', function(done) {
       request(app)
-        .get('/ideas')
+        .get('/ideas?limit=3&page=0')
         .set('Accept', 'application/json')
         .set('X-Access-Token', token)
         .expect('Content-Type', /json/)
         .expect(200)
         .end(function(err, res) {
           if (err) return done(err);
-          res.body.length.should.eql(4);
-          res.body[0].hashtags.should.containEql("amazing");
+          res.body.length.should.eql(3);
           done();
         });
     });
   });
 
-  describe('get ideas with hashtag #eco for new user', function() {
+  describe('get ALL ideas for first test user for limit 3 and page 1', function() {
+    it('respond with 200 and json of 3 ideas', function(done) {
+      request(app)
+        .get('/ideas?limit=3&page=1')
+        .set('Accept', 'application/json')
+        .set('X-Access-Token', token)
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          res.body.length.should.eql(1);
+          done();
+        });
+    });
+  });
+
+  describe('get ideas with hashtag #eco for first test user', function() {
     it('respond with 200 and json of ideas', function(done) {
       request(app)
         .get('/ideas/eco')
@@ -163,7 +217,7 @@ describe('app test', function() {
     });
   });
 
-  describe('get ideas with hashtag that doesn not exist for new user', function() {
+  describe('get ideas with hashtag that doesn not exist for first test user', function() {
     it('respond with 200 and json of ideas', function(done) {
       request(app)
         .get('/ideas/blahblah')
@@ -179,6 +233,90 @@ describe('app test', function() {
     });
   });
 
+  describe('create 2nd test firebase user', function() {
+    it('successfully create 2nd test user in firebase', function(done) {
+      firebase.auth().createUserWithEmailAndPassword(testEmail2, testPswd2).then(function(user) {
+	    testUserId2 = user.uid;
+        user.getToken(false).then(function(accessToken) {
+    	  token2 = accessToken;
+    	  done();
+        });
+      }, function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        done(error);
+      });
+    });
+  });  
+
+describe('create a new PRIVATE idea for 2nd test user in db', function() {
+    it('respond with 200 and successfully created idea', function(done) {
+      request(app)
+        .post('/ideas')
+        .send({ idea: "an #eco idea for 2nd test user", public: false })
+        .set('Accept', 'application/json')
+        .set('X-Access-Token', token2)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          //res.text.should.equal('Successfully created user');
+          res.body.date.should.be.ok();
+          done();
+        });
+    });
+  });
+
+  describe('create a 2nd PRIVATE idea for 2nd test user in db', function() {
+    it('respond with 200 and successfully created idea', function(done) {
+      request(app)
+        .post('/ideas')
+        .send({ idea: "a #brand new idea for 2nd user", public: false })
+        .set('Accept', 'application/json')
+        .set('X-Access-Token', token2)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          //res.text.should.equal('Successfully created user');
+          done();
+        });
+    });
+  });  
+
+  describe('get ideas with hashtag #eco for 2nd test user', function() {
+    it('respond with 200 and json of ideas', function(done) {
+      request(app)
+        .get('/ideas/eco')
+        .set('Accept', 'application/json')
+        .set('X-Access-Token', token2)
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          res.body.length.should.eql(1);
+          res.body[0].hashtags.should.containEql("eco");
+          res.body[0].idea.should.eql("an #eco idea for 2nd test user");
+          done();
+        });
+    });
+  });
+
+  describe('get ALL ideas for 2nd test user', function() {
+    it('respond with 200 and json of ideas', function(done) {
+      request(app)
+        .get('/ideas')
+        .set('Accept', 'application/json')
+        .set('X-Access-Token', token2)
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          res.body.length.should.eql(2);
+          done();
+        });
+    });
+  });
+  
   describe('get ideas for user not in system', function() {
     it('respond with 403', function(done) {
       request(app)
@@ -189,12 +327,12 @@ describe('app test', function() {
     });
   });  
 
-  describe('get ALL PUBLIC ideas for new user', function() {
+  describe('get ALL PUBLIC ideas for 2nd test user', function() {
     it('respond with 200 and json of ideas', function(done) {
       request(app)
         .get('/ideas/public')
         .set('Accept', 'application/json')
-        .set('X-Access-Token', token)
+        .set('X-Access-Token', token2)
         .expect('Content-Type', /json/)
         .expect(200)
         .end(function(err, res) {
@@ -206,7 +344,7 @@ describe('app test', function() {
     });
   });
 
-  describe('get ALL PUBLIC ideas with hashtag #tech for new user', function() {
+  describe('get ALL PUBLIC ideas with hashtag #tech for first test user', function() {
     it('respond with 200 and json of ideas', function(done) {
       request(app)
         .get('/ideas/public/tech')
@@ -223,7 +361,7 @@ describe('app test', function() {
     });
   });  
 
-  describe('get ALL PUBLIC ideas with hashtag that does not exist for new user', function() {
+  describe('get ALL PUBLIC ideas with hashtag that does not exist for first test user', function() {
     it('respond with 200 and json of ideas', function(done) {
       request(app)
         .get('/ideas/public/amazing')
@@ -318,7 +456,7 @@ describe('app test', function() {
     });
   });
 
-  describe('delete the new user', function() {
+  describe('delete first test user from db', function() {
     it('respond with 200 and successfully deleted user', function(done) {
       request(app)
         .delete('/users')
@@ -331,6 +469,34 @@ describe('app test', function() {
           done();
         });
     });
+  });
+
+  describe('delete the 2nd test user from firebase', function() {
+    it('should delete 2nd test user from firebase', function(done) {
+      firebase.auth().currentUser.delete().then(function() {
+  	    //console.log('deleted test user');
+  	    done();
+      }, function(error) {
+  	    done(error);
+      });
+    });
+  });
+
+
+  describe('delete the first test user from firebase', function() {
+    it('should login and delete first test user from firebase', function(done) {
+      firebase.auth().signInWithEmailAndPassword(testEmail, testPswd).then(function(user) {
+        user.delete().then(function() {
+  	      //console.log('deleted test user');
+  	      done();
+        }, function(error) {
+  	      done(error);
+        });
+  	  });
+    }, function(error) {
+  	    done(error);
+    });
+    
   });
 
   describe('delete user by unauthorized user', function() {

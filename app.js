@@ -6,7 +6,7 @@ var auth = require('./firebaseadmin');
 var bodyParser = require('body-parser');
 var Idea = require('./models/Idea');
 var User = require('./models/User');
-var Tag = require('./models/Tag');
+var Hashtag = require('./models/Hashtag');
 var utils = require('./utils');
 
 var app = express();
@@ -73,15 +73,28 @@ function getTodayIdeas(sender, senderSource, cb) {
 };
 
 app.post('/ideas', auth, function (req, res) {
+  var idea = req.body.idea;
+  var uid = req.uid;
+  var hashtags = utils.getHashTags(idea);
   Idea.create({
-    idea : req.body.idea,
-    userId : req.uid,
-    hashtags : utils.getHashTags(req.body.idea),
+    idea : idea,
+    userId : uid,
+    hashtags : hashtags,
     public : req.body.public
 
   }, 
   function (err, idea) {
       if (err) return res.status(500).send("There was a problem adding the information to the database.");
+      for (i=0; i<hashtags.length; i++) {
+        var query = { hashtag: hashtags[i], userId: uid };
+        var dt = new Date();
+	    //Hashtag.findOneAndUpdate(query, { $inc: {count:1}, userId: req.uid }, {upsert: true}, function(err, hashtag) {
+	      //if (err) return res.status(500).send("There was a problem adding the information to the database.");
+	    //});
+	    Hashtag.update(query, { $inc: {count:1}, userId: uid, date: dt }, {upsert: true}, function(err, hashtag) {
+	      //if (err) return res.status(500).send("There was a problem adding the information to the database.");
+	    });
+      }
       res.status(200).send(idea);
     });
 });
@@ -102,7 +115,9 @@ app.get('/ideas/public/:tag', function (req, res) {
 
 app.get('/ideas', auth, function (req, res) {
   //console.log(req.uid);
-  Idea.findByUserId(req.uid, function (err, ideas) {
+  var limit = parseInt(req.query.limit);
+  var page = parseInt(req.query.page);
+  Idea.findByUserId(req.uid, limit, page, function (err, ideas) {
     if (err) return res.status(500).send("There was a problem finding the ideas for user.");
     res.status(200).send(ideas);
   });

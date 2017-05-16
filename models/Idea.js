@@ -1,6 +1,9 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
+var IDEA_QUERY_LIMIT = 3;
+var IDEA_QUERY_SORT_ORDER = {date: -1};
+
 var ideaSchema = new Schema({
   idea:  {
     type: String,
@@ -29,9 +32,17 @@ var ideaSchema = new Schema({
   }
 });
 
-ideaSchema.static('findByUserId', function (uid, callback) {
+ideaSchema.static('findByUserId', function (uid, limit, page, callback) {
   //console.log("uid is: " + uid);
-  return this.find({ userId: uid }, callback);
+  //return this.find({ userId: uid }, callback);
+  limit = limit || IDEA_QUERY_LIMIT;
+  page =  page || 0;
+  return this.find()
+    .where('userId').equals(uid)
+    .limit(limit)
+    .skip(limit * page)
+    .sort(IDEA_QUERY_SORT_ORDER)
+    .exec(callback);
 });
 
 ideaSchema.static('findByTag', function(uid, tag, callback) {

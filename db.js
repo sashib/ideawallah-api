@@ -5,6 +5,7 @@ mongoose.connect('mongodb://db:ideasd3v@ds021691.mlab.com:21691/ideasdb', null, 
 });
 */
 var mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
 
 var mongoURI = {
   prod: 'mongodb://db:ideasd3v@ds021691.mlab.com:21691/ideasdb',
