@@ -141,31 +141,38 @@ app.delete('/ideas', auth, function(req, res) {
 
 // ***************************************************
 
-app.post('/tags', auth, function (req, res) {
-  Tag.create({
-    tag : req.body.tag,
+app.post('/hashtags', auth, function (req, res) {
+  Hashtag.create({
+    hashtag : req.body.hashtag,
     userId : req.uid
   }, 
-  function (err, tag) {
+  function (err, hashtag) {
     if (err) return res.status(500).send("There was a problem adding the information to the database.");
-      res.status(200).send(tag);
+      res.status(200).send(hashtag);
     });
 });
 
-app.get('/tags/public', function (req, res) {
-  Tag.find({}, function (err, tags) {
+app.get('/hashtags/public', function (req, res) {
+  Hashtag.find({}, function (err, hashtags) {
     if (err) return res.status(500).send("There was a problem finding the ideas.");
-    res.status(200).send(tags);
+    res.status(200).send(hashtags);
   });
 });
 
-app.get('/tags', auth, function (req, res) {
+app.get('/hashtags', auth, function (req, res) {
   console.log(req.uid);
-  Tag.findByUserId(req.uid, function (err, tags) {
+  Hashtag.findByUserId(req.uid, function (err, hashtags) {
     if (err) return res.status(500).send("There was a problem finding the ideas for user.");
-      res.status(200).send(tags);
+      res.status(200).send(hashtags);
   });
 });
+
+app.delete('/hashtags', auth, function(req, res) {
+  Hashtag.remove({ userId: req.uid }, function (err) {
+    if (err) return res.status(500).send("There was a problem deleting the information from the database.");
+    res.status(200).send("Hashtags removed Successfully");
+  });	
+})
 
 // ***************************************************
 

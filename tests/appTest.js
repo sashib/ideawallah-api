@@ -1,6 +1,6 @@
+var app = require("../app");
 var request = require("supertest");
 var should = require("should");
-var app = require("../app");
 
 var firebase = require("firebase");
 var config = {
@@ -233,6 +233,22 @@ describe('app test', function() {
     });
   });
 
+  describe('get all hashtags for first test user', function() {
+    it('respond with 200 and json of hashtags', function(done) {
+      request(app)
+        .get('/hashtags')
+        .set('Accept', 'application/json')
+        .set('X-Access-Token', token)
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          res.body.length.should.eql(7);
+          done();
+        });
+    });
+  });  
+
   describe('create 2nd test firebase user', function() {
     it('successfully create 2nd test user in firebase', function(done) {
       firebase.auth().createUserWithEmailAndPassword(testEmail2, testPswd2).then(function(user) {
@@ -426,12 +442,57 @@ describe('create a new PRIVATE idea for 2nd test user in db', function() {
     });
   });
 
-  describe('delete all ideas by new user', function() {
-    it('respond with 200 and successfully deleted ideas for new user', function(done) {
+  describe('delete all ideas by first test user', function() {
+    it('respond with 200 and successfully deleted ideas for first test user', function(done) {
       request(app)
         .delete('/ideas')
         .set('Accept', 'application/json')
         .set('X-Access-Token', token)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          //res.text.should.equal('Successfully created user');
+          done();
+        });
+    });
+  });
+
+  describe('delete all hashtags by first test user', function() {
+    it('respond with 200 and successfully deleted hashtags for first test user', function(done) {
+      request(app)
+        .delete('/hashtags')
+        .set('Accept', 'application/json')
+        .set('X-Access-Token', token)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          //res.text.should.equal('Successfully created user');
+          done();
+        });
+    });
+  });
+
+describe('delete all ideas by 2nd test user', function() {
+    it('respond with 200 and successfully deleted ideas for 2nd test user', function(done) {
+      request(app)
+        .delete('/ideas')
+        .set('Accept', 'application/json')
+        .set('X-Access-Token', token2)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          //res.text.should.equal('Successfully created user');
+          done();
+        });
+    });
+  });
+
+  describe('delete all hashtags by 2nd test user', function() {
+    it('respond with 200 and successfully deleted hashtags for 2nd test user', function(done) {
+      request(app)
+        .delete('/hashtags')
+        .set('Accept', 'application/json')
+        .set('X-Access-Token', token2)
         .expect(200)
         .end(function(err, res) {
           if (err) return done(err);
