@@ -178,9 +178,10 @@ app.delete('/hashtags', auth, function(req, res) {
 
 
 app.post('/users', auth, function (req, res) {
-  //console.log(req.uid);
+  console.log("creating user, uid is: " + req.uid);
   User.findByUserId(req.uid, function (err, user) {
     if (err) return res.status(500).send("There was a problem finding the ideas for user.");
+    console.log("user length is: " + user.length);
     if (user.length > 0) res.status(200).send(user);
   });
 

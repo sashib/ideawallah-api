@@ -103,6 +103,22 @@ describe('app test', function() {
     });
   });
 
+  describe('create first test user in db AGAIN', function() {
+    it('respond with 200 and successfully created user', function(done) {
+      request(app)
+        .post('/users')
+        .send({ email: testEmail, name: testName, userId: testUserId })
+        .set('Accept', 'application/json')
+        .set('X-Access-Token', token)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          res.body.name.should.equal('tester');
+          done();
+        });
+    });
+  });
+
   describe('create a new PRIVATE idea for first test user in db', function() {
     it('respond with 200 and successfully created idea', function(done) {
       request(app)
