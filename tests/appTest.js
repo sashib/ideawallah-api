@@ -97,7 +97,7 @@ describe('app test', function() {
         .expect(200)
         .end(function(err, res) {
           if (err) return done(err);
-          res.text.should.equal('Successfully created user');
+          res.body.name.should.equal('tester');
           done();
         });
     });

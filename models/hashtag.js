@@ -12,7 +12,7 @@ var hashtagSchema = new Schema({
 });
 
 hashtagSchema.static('findByUserId', function (uid, callback) {
-  console.log("uid is: " + uid);
+  //console.log("uid is: " + uid);
   return this.find({ userId: uid }, callback);
 });
 

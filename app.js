@@ -84,19 +84,19 @@ app.post('/ideas', auth, function (req, res) {
 
   }, 
   function (err, idea) {
-      if (err) return res.status(500).send("There was a problem adding the information to the database.");
-      for (i=0; i<hashtags.length; i++) {
-        var query = { hashtag: hashtags[i], userId: uid };
-        var dt = new Date();
+    if (err) return res.status(500).send("There was a problem adding the information to the database.");
+    for (i=0; i<hashtags.length; i++) {
+      var query = { hashtag: hashtags[i], userId: uid };
+      var dt = new Date();
 	    //Hashtag.findOneAndUpdate(query, { $inc: {count:1}, userId: req.uid }, {upsert: true}, function(err, hashtag) {
 	      //if (err) return res.status(500).send("There was a problem adding the information to the database.");
 	    //});
 	    Hashtag.update(query, { $inc: {count:1}, userId: uid, date: dt }, {upsert: true}, function(err, hashtag) {
 	      //if (err) return res.status(500).send("There was a problem adding the information to the database.");
 	    });
-      }
-      res.status(200).send(idea);
-    });
+    }
+    res.status(200).send(idea);
+  });
 });
 
 app.get('/ideas/public', function (req, res) {
@@ -160,7 +160,7 @@ app.get('/hashtags/public', function (req, res) {
 });
 
 app.get('/hashtags', auth, function (req, res) {
-  console.log(req.uid);
+  //console.log(req.uid);
   Hashtag.findByUserId(req.uid, function (err, hashtags) {
     if (err) return res.status(500).send("There was a problem finding the ideas for user.");
       res.status(200).send(hashtags);
@@ -181,7 +181,7 @@ app.post('/users', auth, function (req, res) {
   //console.log(req.uid);
   User.findByUserId(req.uid, function (err, user) {
     if (err) return res.status(500).send("There was a problem finding the ideas for user.");
-    if (user.length > 0) res.status(403).send("User already exists");
+    if (user.length > 0) res.status(200).send(user);
   });
 
   User.create({
@@ -191,7 +191,7 @@ app.post('/users', auth, function (req, res) {
   }, 
   function (err, user) {
     if (err) return res.status(500).send("There was a problem adding the information to the database.");
-    res.status(200).send("Successfully created user");
+    res.status(200).send(user);
   });
 });
 
