@@ -179,7 +179,7 @@ app.delete('/hashtags', auth, function(req, res) {
 
 app.post('/users', auth, function (req, res) {
   User.findByUserId(req.uid, function (err, user) {
-    if (err) return res.status(500).send("There was a problem finding the ideas for user.");
+    if (err) return res.status(500).send({"message": "There was a problem finding the ideas for user."});
     if (user != null) {
       res.status(200).send(user);
     } else {
@@ -189,7 +189,7 @@ app.post('/users', auth, function (req, res) {
         email : req.body.email
       }, 
       function (err, user) {
-        if (err) return res.status(500).send("There was a problem adding the information to the database.");
+        if (err) return res.status(500).send({"message": "There was a problem adding the information to the database."});
         res.status(200).send(user);
       });      
     }
@@ -200,7 +200,7 @@ app.post('/users', auth, function (req, res) {
 app.delete('/users', auth, function(req, res) {
   //console.log(req.uid);
   User.remove({ userId: req.uid }, function (err) {
-    if (err) return res.status(500).send("There was a problem deleting the information from the database.");
+    if (err) return res.status(500).send({"message": "There was a problem deleting the information from the database."});
     res.status(200).send("User removed Successfully");
   });
 });
@@ -208,7 +208,7 @@ app.delete('/users', auth, function(req, res) {
 app.get('/users', auth, function (req, res) {
   //console.log(req.uid);
   User.findByUserId(req.uid, function (err, user) {
-    if (err) return res.status(500).send("There was a problem finding the user.");
+    if (err) return res.status(500).send({"message": "There was a problem finding the user."});
     res.status(200).send(user);
   });
 });
