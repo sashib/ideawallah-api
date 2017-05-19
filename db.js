@@ -8,7 +8,8 @@ var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
 var mongoURI = {
-  production: 'mongodb://db:ideasd3v@ds021691.mlab.com:21691/ideasdb',
+  //aws version: production: 'mongodb://db:ideasd3v@ds021691.mlab.com:21691/ideasdb',
+  production: 'mongodb://db:id3asdb@ds064299.mlab.com:64299/ideawallahdb',
   //production: 'mongodb://ideawallahdb:LZfikYbGjBdQksTlYp7f4v5SjIHN3GwAEkQX2ED0BNKvPlw9jpzA9rsfPIhBNHGPALJ7R7iqlzmQ1Zc9LPSyjw==@ideawallahdb.documents.azure.com:10255/ideawallahdb?ssl=true&replicaSet=globaldb',
   //dev: 'mongodb://dbdev:dbdev@ds137291.mlab.com:37291/ideasdbdev',
   //test: 'mongodb://dbtest:dbtest@ds139761.mlab.com:39761/ideasdbtest'
