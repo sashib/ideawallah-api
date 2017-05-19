@@ -182,6 +182,7 @@ app.post('/users', auth, function (req, res) {
   console.log("req uid is: " + req.uid);
   User.findByUserId(req.uid, function (err, user) {
     console.log("user found is: " + user);
+    console.log("err is: " + err);
     if (err) return res.status(500).send({"message": "There was a problem finding the ideas for user."});
     if (user != null) {
       res.status(200).send(user);
