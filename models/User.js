@@ -13,7 +13,7 @@ var userSchema = new Schema({
 
 userSchema.static('findByUserId', function (uid, callback) {
   //console.log("uid is: " + uid);
-  return this.find({ userId: uid }, callback);
+  return this.findOne({ userId: uid }, callback);
 });
 
 userSchema.static('findByUserEmail', function (email, callback) {
