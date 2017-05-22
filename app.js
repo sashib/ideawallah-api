@@ -160,8 +160,9 @@ app.get('/hashtags/public', function (req, res) {
 });
 
 app.get('/hashtags', auth, function (req, res) {
-  //console.log(req.uid);
-  Hashtag.findByUserId(req.uid, function (err, hashtags) {
+  var limit = parseInt(req.query.limit);
+  var page = parseInt(req.query.page);
+  Hashtag.findByUserId(req.uid, limit, page, function (err, hashtags) {
     if (err) return res.status(500).send("There was a problem finding the ideas for user.");
       res.status(200).send(hashtags);
   });

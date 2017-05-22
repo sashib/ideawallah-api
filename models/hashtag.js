@@ -1,6 +1,9 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
+var LIMIT = 25;
+var SORT_ORDER = {date: -1};
+
 var hashtagSchema = new Schema({
   hashtag:  String,
   userId: String,
@@ -11,9 +14,15 @@ var hashtagSchema = new Schema({
   }
 });
 
-hashtagSchema.static('findByUserId', function (uid, callback) {
-  //console.log("uid is: " + uid);
-  return this.find({ userId: uid }, callback);
+hashtagSchema.static('findByUserId', function (uid, limit, page, callback) {
+  limit = limit || LIMIT;
+  page =  page || 0;
+  return this.find()
+    .where('userId').equals(uid)
+    .limit(limit)
+    .skip(limit * page)
+    .sort(SORT_ORDER)
+    .exec(callback);
 });
 
 module.exports = mongoose.model('Hashtag', hashtagSchema);

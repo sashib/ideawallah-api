@@ -249,17 +249,17 @@ describe('app test', function() {
     });
   });
 
-  describe('get all hashtags for first test user', function() {
+  describe('get all hashtags for first test user for limit 3 and page 1', function() {
     it('respond with 200 and json of hashtags', function(done) {
       request(app)
-        .get('/hashtags')
+        .get('/hashtags?limit=3&page=0')
         .set('Accept', 'application/json')
         .set('X-Access-Token', token)
         .expect('Content-Type', /json/)
         .expect(200)
         .end(function(err, res) {
           if (err) return done(err);
-          res.body.length.should.eql(7);
+          res.body.length.should.eql(3);
           done();
         });
     });

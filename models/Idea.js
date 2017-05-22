@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var IDEA_QUERY_LIMIT = 3;
+var IDEA_QUERY_LIMIT = 25;
 var IDEA_QUERY_SORT_ORDER = {date: -1};
 
 var ideaSchema = new Schema({
