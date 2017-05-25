@@ -219,7 +219,7 @@ describe('app test', function() {
   describe('get ideas with hashtag #eco for first test user', function() {
     it('respond with 200 and json of ideas', function(done) {
       request(app)
-        .get('/ideas/eco')
+        .get('/ideas/eco?limit=3&page=0')
         .set('Accept', 'application/json')
         .set('X-Access-Token', token)
         .expect('Content-Type', /json/)
@@ -318,7 +318,7 @@ describe('create a new PRIVATE idea for 2nd test user in db', function() {
   describe('get ideas with hashtag #eco for 2nd test user', function() {
     it('respond with 200 and json of ideas', function(done) {
       request(app)
-        .get('/ideas/eco')
+        .get('/ideas/eco?limit=3&page=0')
         .set('Accept', 'application/json')
         .set('X-Access-Token', token2)
         .expect('Content-Type', /json/)

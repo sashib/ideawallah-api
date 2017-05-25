@@ -45,9 +45,18 @@ ideaSchema.static('findByUserId', function (uid, limit, page, callback) {
     .exec(callback);
 });
 
-ideaSchema.static('findByTag', function(uid, tag, callback) {
+ideaSchema.static('findByTag', function(uid, limit, page, tag, callback) {
   //console.log("uid is: " + uid + ", tag is: " + tag);
-  return this.find({userId: uid, hashtags: { $in: [tag]}}, callback);
+  limit = limit || IDEA_QUERY_LIMIT;
+  page =  page || 0;
+  return this.find({hashtags: { $in: [tag]}})
+    .where('userId').equals(uid)
+    .limit(limit)
+    .skip(limit * page)
+    .sort(IDEA_QUERY_SORT_ORDER)
+    .exec(callback);
+
+  //return this.find({userId: uid, hashtags: { $in: [tag]}}, callback);
 });
 
 ideaSchema.static('findByTagPublic', function(tag, callback) {

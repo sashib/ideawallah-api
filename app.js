@@ -124,8 +124,9 @@ app.get('/ideas', auth, function (req, res) {
 });
 
 app.get('/ideas/:tag', auth, function (req, res) {
-  //console.log(req.uid);
-  Idea.findByTag(req.uid, req.params.tag, function (err, ideas) {
+  var limit = parseInt(req.query.limit);
+  var page = parseInt(req.query.page);
+  Idea.findByTag(req.uid, limit, page, req.params.tag, function (err, ideas) {
     if (err) return res.status(500).send("There was a problem finding the ideas for user.");
     res.status(200).send(ideas);
   });
